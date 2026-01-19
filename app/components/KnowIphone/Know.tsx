@@ -6,7 +6,7 @@ import BoxKnow from "./BoxKnow";
 const Know = () => {
   const [index, setIndex] = useState(0);
   const [cardWidth, setCardWidth] = useState(340);
-  const [gap, setGap] = useState(80); // 👈 NEW
+  const [gap, setGap] = useState(80);
 
   const items = [
     {
@@ -46,7 +46,7 @@ const Know = () => {
         setCardWidth(300);
         setGap(32);
       } else {
-        setCardWidth(340);
+        setCardWidth(300);
         setGap(80);
       }
     };
@@ -62,34 +62,40 @@ const Know = () => {
         Get to know iPhone.
       </h1>
 
-      <div className="relative overflow-hidden">
-        {/* Left */}
+      <div className="relative">
+        {/* Left Button */}
         <button
           onClick={() => setIndex(Math.max(index - 1, 0))}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 sm:p-3"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-30 bg-white shadow-lg rounded-full p-2 sm:p-3"
         >
           <FaChevronLeft />
         </button>
 
-        {/* Track */}
-        <div
-          className="flex transition-transform duration-500 ease-out"
-          style={{
-            transform: `translateX(-${index * (cardWidth + gap)}px)`,
-            gap: `${gap}px`,
-          }}
-        >
-          {items.map((item, i) => (
-            <div key={i} style={{ width: cardWidth }} className="shrink-0">
-              <BoxKnow {...item} />
-            </div>
-          ))}
+        {/* Viewport */}
+        <div className="overflow-hidden py-8 px-5">
+          <div
+            className="flex transition-transform duration-500 ease-out"
+            style={{
+              transform: `translateX(-${index * (cardWidth + gap)}px)`,
+              gap: `${gap}px`,
+            }}
+          >
+            {items.map((item, i) => (
+              <div
+                key={i}
+                style={{ width: cardWidth }}
+                className="shrink-0 relative hover:z-20 "
+              >
+                <BoxKnow {...item} />
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Right */}
+        {/* Right Button */}
         <button
           onClick={() => setIndex(Math.min(index + 1, items.length - 1))}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 sm:p-3"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-30 bg-white shadow-lg rounded-full p-2 sm:p-3"
         >
           <FaChevronRight />
         </button>
@@ -99,5 +105,6 @@ const Know = () => {
 };
 
 export default Know;
+
 
 

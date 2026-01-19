@@ -94,7 +94,7 @@ const setTextRef = (index: number) => (el: HTMLParagraphElement | null) => {
       <section className="relative w-full">
         <div className="block md:hidden">
           <Image
-            src="/iphone_17_pro.jpg"
+            src="/Iphone_17_pro.jpg"
             alt="iPhone 17 Pro"
             width={1200}
             height={1600}
