@@ -1,11 +1,12 @@
-"use client"
-import React, { useState, useEffect } from 'react'
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
-import BoxKnow from './BoxKnow'
+"use client";
+import React, { useState, useEffect } from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import BoxKnow from "./BoxKnow";
 
 const Know = () => {
-  const [index, setIndex] = useState(0)
-  const [cardWidth, setCardWidth] = useState(340) // default width
+  const [index, setIndex] = useState(0);
+  const [cardWidth, setCardWidth] = useState(340);
+  const [gap, setGap] = useState(80); // 👈 NEW
 
   const items = [
     {
@@ -32,32 +33,37 @@ const Know = () => {
       description: "iPhone 17 Pro",
       image: "/iosimg.jpg",
     },
-  ]
+  ];
 
-  // Adjust card width based on screen size
   useEffect(() => {
-    const updateCardWidth = () => {
-      const width = window.innerWidth
-      if (width < 640) setCardWidth(280) // sm
-      else if (width < 1024) setCardWidth(300) // md
-      else setCardWidth(100) // lg+
-    }
+    const updateLayout = () => {
+      const width = window.innerWidth;
 
-    updateCardWidth()
-    window.addEventListener('resize', updateCardWidth)
-    return () => window.removeEventListener('resize', updateCardWidth)
-  }, [])
+      if (width < 640) {
+        setCardWidth(280);
+        setGap(24);
+      } else if (width < 1024) {
+        setCardWidth(300);
+        setGap(32);
+      } else {
+        setCardWidth(340);
+        setGap(80);
+      }
+    };
+
+    updateLayout();
+    window.addEventListener("resize", updateLayout);
+    return () => window.removeEventListener("resize", updateLayout);
+  }, []);
 
   return (
     <div className="p-6 sm:p-10 lg:p-20">
-      {/* Heading */}
       <h1 className="text-3xl sm:text-4xl lg:text-[50px] font-semibold mb-8 sm:mb-10">
         Get to know iPhone.
       </h1>
 
-      {/* Carousel */}
-      <div className="relative">
-        {/* Left Button */}
+      <div className="relative overflow-hidden">
+        {/* Left */}
         <button
           onClick={() => setIndex(Math.max(index - 1, 0))}
           className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 sm:p-3"
@@ -67,19 +73,20 @@ const Know = () => {
 
         {/* Track */}
         <div
-          className="flex gap-6 sm:gap-8 lg:gap-10 transition-transform duration-500 ease-out"
+          className="flex transition-transform duration-500 ease-out"
           style={{
-            transform: `translateX(-${index * (cardWidth + (window.innerWidth < 1024 ? (window.innerWidth < 640 ? 24 : 32) : 80))}px)`,
+            transform: `translateX(-${index * (cardWidth + gap)}px)`,
+            gap: `${gap}px`,
           }}
         >
           {items.map((item, i) => (
-            <div key={i} className={`shrink-0 w-[${cardWidth}px]`}>
+            <div key={i} style={{ width: cardWidth }} className="shrink-0">
               <BoxKnow {...item} />
             </div>
           ))}
         </div>
 
-        {/* Right Button */}
+        {/* Right */}
         <button
           onClick={() => setIndex(Math.min(index + 1, items.length - 1))}
           className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 sm:p-3"
@@ -88,8 +95,9 @@ const Know = () => {
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Know
+export default Know;
+
 
