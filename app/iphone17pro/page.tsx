@@ -146,7 +146,9 @@ export default function Page() {
             >
               {/* TEXT */}
               <p
-                ref={(el) => (textRefs.current[i] = el)}
+                ref={(el) => {
+                  textRefs.current[i] = el; // Assign the ref
+                }}
                 className="absolute top-4 sm:top-6  -translate-x-1/2 text-center w-full text-base sm:text-xl md:text-[28px] font-bold px-4 sm:px-10"
               >
                 {slide.text}
