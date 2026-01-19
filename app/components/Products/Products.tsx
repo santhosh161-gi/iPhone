@@ -63,10 +63,9 @@ export default function ProductsCarousel() {
             className="flex-shrink-0 w-[80%] sm:w-[45%] md:w-[32%] lg:w-[26%] xl:w-[30%] flex flex-col items-center text-center snap-start"
           >
             <div className="relative w-full h-[250px]">
-              <Image
+              <img  
                 src={p.image}
                 alt={p.name}
-                fill
                 className="object-cover rounded-3xl"
               />
             </div>
