@@ -1,4 +1,7 @@
 // lib/firebase/firebaseApp.ts
+// app/lib/firebase.ts
+"use client";
+
 import { initializeApp, getApps, getApp } from "firebase/app";
 
 const firebaseConfig = {
@@ -11,4 +14,5 @@ const firebaseConfig = {
 };
 
 export const firebaseApp =
-  getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+  getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+
