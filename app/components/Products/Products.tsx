@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { collection, getDocs } from "firebase/firestore";
-import { getFirebaseAuth, getFirebaseDB } from "../../lib/firebaseClient";
+import { getFirebaseDB } from "../../lib/firebaseClient";
 import { FaAngleRight, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 type Product = {
@@ -21,39 +21,25 @@ export default function ProductsCarousel() {
   const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let unsubscribe: (() => void) | undefined;
-
-    const initAndFetch = async () => {
+    const fetchProducts = async () => {
       try {
-        const auth = getFirebaseAuth();
-        const db = getFirebaseDB();
+        const db = getFirebaseDB(); // ✅ Firestore only
+        const snapshot = await getDocs(collection(db, "products"));
 
-        unsubscribe = auth.onAuthStateChanged(async (user) => {
-          if (!user) {
-            setLoading(false);
-            return;
-          }
+        const list = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...(doc.data() as Omit<Product, "id">),
+        }));
 
-          const snapshot = await getDocs(collection(db, "products"));
-          const list = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...(doc.data() as Omit<Product, "id">),
-          }));
-
-          setProducts(list);
-          setLoading(false);
-        });
+        setProducts(list);
       } catch (err) {
-        console.error("Firebase init error:", err);
+        console.error("Error fetching products:", err);
+      } finally {
         setLoading(false);
       }
     };
 
-    initAndFetch();
-
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
+    fetchProducts();
   }, []);
 
   // Scroll slider left/right
@@ -129,7 +115,7 @@ export default function ProductsCarousel() {
         ))}
       </div>
 
-      {/* NAVIGATION */}
+      {/* DESKTOP NAVIGATION */}
       <button
         onClick={() => scroll("left")}
         className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 bg-white shadow-lg p-3 rounded-full hover:scale-110 transition z-10"
@@ -146,6 +132,7 @@ export default function ProductsCarousel() {
     </div>
   );
 }
+
 
 
 
