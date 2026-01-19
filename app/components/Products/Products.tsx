@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { getFirebaseDB, getFirebaseAuth } from "../../lib/firebaseClient";
 import { collection, getDocs } from "firebase/firestore";
+import { getFirebaseAuth, getFirebaseDB } from "../../lib/firebaseClient";
 import { FaAngleRight, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 type Product = {
@@ -20,34 +20,41 @@ export default function ProductsCarousel() {
   const [loading, setLoading] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
 
-  const auth = getFirebaseAuth();
-  const db = getFirebaseDB();
-
-  // Fetch products from Firebase when auth is ready
   useEffect(() => {
-    const fetchProducts = async () => {
-      if (!auth) return;
+    let unsubscribe: (() => void) | undefined;
+
+    const initAndFetch = async () => {
       try {
-        const snapshot = await getDocs(collection(db, "products"));
-        const list = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...(doc.data() as Omit<Product, "id">),
-        }));
-        setProducts(list);
+        const auth = getFirebaseAuth();
+        const db = getFirebaseDB();
+
+        unsubscribe = auth.onAuthStateChanged(async (user) => {
+          if (!user) {
+            setLoading(false);
+            return;
+          }
+
+          const snapshot = await getDocs(collection(db, "products"));
+          const list = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...(doc.data() as Omit<Product, "id">),
+          }));
+
+          setProducts(list);
+          setLoading(false);
+        });
       } catch (err) {
-        console.error("Error fetching products:", err);
-      } finally {
+        console.error("Firebase init error:", err);
         setLoading(false);
       }
     };
 
-    // Wait for auth to be ready
-    const unsubscribe = auth?.onAuthStateChanged((user) => {
-      if (user) fetchProducts();
-    });
+    initAndFetch();
 
-    return () => unsubscribe && unsubscribe();
-  }, [auth, db]);
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
 
   // Scroll slider left/right
   const scroll = (direction: "left" | "right") => {
@@ -89,15 +96,10 @@ export default function ProductsCarousel() {
               />
             </div>
 
-            {/* COLOR DOTS */}
-            <div className="flex gap-2 mt-3">
-              <span className="w-3 h-3 bg-gray-300 rounded-full" />
-              <span className="w-3 h-3 bg-gray-400 rounded-full" />
-              <span className="w-3 h-3 bg-black rounded-full" />
-            </div>
-
             {/* QUALITY */}
-            <p className="text-orange-600 text-xs sm:text-sm mt-2">{p.Quality}</p>
+            <p className="text-orange-600 text-xs sm:text-sm mt-2">
+              {p.Quality}
+            </p>
 
             {/* NAME */}
             <h2 className="text-sm sm:text-lg md:text-xl font-semibold mt-1">
@@ -110,7 +112,9 @@ export default function ProductsCarousel() {
             </p>
 
             {/* PRICE */}
-            <p className="font-semibold mt-2 text-sm sm:text-base">From ₹{p.price}</p>
+            <p className="font-semibold mt-2 text-sm sm:text-base">
+              From ₹{p.price}
+            </p>
 
             {/* CTA */}
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-3">
@@ -125,7 +129,7 @@ export default function ProductsCarousel() {
         ))}
       </div>
 
-      {/* DESKTOP NAVIGATION */}
+      {/* NAVIGATION */}
       <button
         onClick={() => scroll("left")}
         className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 bg-white shadow-lg p-3 rounded-full hover:scale-110 transition z-10"
@@ -142,6 +146,7 @@ export default function ProductsCarousel() {
     </div>
   );
 }
+
 
 
 

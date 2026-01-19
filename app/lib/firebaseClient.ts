@@ -5,11 +5,11 @@ import { getFirestore, Firestore } from "firebase/firestore";
 import { getStorage, FirebaseStorage } from "firebase/storage";
 import { getFirebaseApp } from "./firebase";
 
-// 🔒 Singletons (never null)
 let auth: Auth | undefined;
 let db: Firestore | undefined;
 let storage: FirebaseStorage | undefined;
 
+// ✅ LAZY AUTH (DO NOT RUN DURING BUILD)
 export function getFirebaseAuth(): Auth {
   if (!auth) {
     auth = getAuth(getFirebaseApp());
