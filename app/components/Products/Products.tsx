@@ -55,14 +55,14 @@ export default function ProductsCarousel() {
     <div className="relative w-full mt-10 px-2 sm:px-6">
       <div
         ref={sliderRef}
-        className="flex gap-6 sm:gap-8 overflow-x-auto scroll-smooth no-scrollbar py-4 snap-x snap-mandatory"
+        className="flex gap-6 sm:gap-8 overflow-x-auto scroll-smooth no-scrollbar sm:overflow-x-hidden py-4 snap-x snap-mandatory"
       >
         {products.map((p) => (
           <div
             key={p.id}
-            className="flex-shrink-0 w-[80%] sm:w-[45%] md:w-[32%] lg:w-[26%] xl:w-[30%] flex flex-col items-center text-center snap-start"
+            className="flex-shrink-0 w-[80%] sm:w-[45%] md:w-[32%] lg:w-[26%] xl:w-[30%] flex flex-col items-center text-center snap-start overflow-hidden"
           >
-            <div className="relative w-full h-[250px]">
+            <div className="relative w-full h-[250px] sm:pb-90 pb-70">
               <img  
                 src={p.image}
                 alt={p.name}
