@@ -1,12 +1,33 @@
-// app/lib/firebaseClient.ts
 "use client";
 
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-import { firebaseApp } from "./firebase";
+import { getAuth, Auth } from "firebase/auth";
+import { getFirestore, Firestore } from "firebase/firestore";
+import { getStorage, FirebaseStorage } from "firebase/storage";
+import { getFirebaseApp } from "./firebase";
 
-export const auth = getAuth(firebaseApp);
-export const db = getFirestore(firebaseApp);
-export const storage = getStorage(firebaseApp);
+// 🔒 Singletons (never null)
+let auth: Auth | undefined;
+let db: Firestore | undefined;
+let storage: FirebaseStorage | undefined;
+
+export function getFirebaseAuth(): Auth {
+  if (!auth) {
+    auth = getAuth(getFirebaseApp());
+  }
+  return auth;
+}
+
+export function getFirebaseDB(): Firestore {
+  if (!db) {
+    db = getFirestore(getFirebaseApp());
+  }
+  return db;
+}
+
+export function getFirebaseStorage(): FirebaseStorage {
+  if (!storage) {
+    storage = getStorage(getFirebaseApp());
+  }
+  return storage;
+}
 

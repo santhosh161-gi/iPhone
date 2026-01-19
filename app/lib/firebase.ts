@@ -1,8 +1,8 @@
-// lib/firebase/firebaseApp.ts
-// app/lib/firebase.ts
 "use client";
 
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
+import { getFirestore, Firestore } from "firebase/firestore";
+import { getAuth, Auth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
@@ -13,6 +13,25 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
 };
 
-export const firebaseApp =
-  getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+// 🔥 Singleton-safe Firebase App
+let firebaseApp: FirebaseApp | undefined;
+
+export function getFirebaseApp(): FirebaseApp {
+  if (!firebaseApp) {
+    firebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
+  }
+  return firebaseApp;
+}
+
+// ✅ Firestore (never null)
+export function getFirebaseDB(): Firestore {
+  return getFirestore(getFirebaseApp());
+}
+
+// ✅ Auth (never null)
+export function getFirebaseAuth(): Auth {
+  return getAuth(getFirebaseApp());
+}
+
+
 
